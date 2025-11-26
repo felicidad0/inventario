@@ -8,8 +8,8 @@ import {
   TrashIcon,
   ArrowPathIcon,
 } from '@heroicons/react/24/outline';
-import { PrismaClient } from '@prisma/client';
-type Product = PrismaClient['product'];
+import type { Product } from "@/types/product";
+
 
 // Definición de tipos para la respuesta de la API
 interface InventoryResponse {

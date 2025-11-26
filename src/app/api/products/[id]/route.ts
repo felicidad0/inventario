@@ -1,4 +1,3 @@
-// src/app/api/products/[id]/route.ts
 import { NextResponse } from 'next/server';
 import { prisma } from '../../../lib/db';
 import { getServerSession } from 'next-auth';
@@ -12,17 +11,19 @@ async function checkAuth() {
   return null;
 }
 
-// GET: Obtener un producto por ID
+// GET
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   const authError = await checkAuth();
   if (authError) return authError;
 
   try {
+    const { id } = await context.params;
+
     const product = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!product) {
@@ -42,15 +43,16 @@ export async function GET(
   }
 }
 
-// PUT: Actualizar un producto por ID
+// PUT
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   const authError = await checkAuth();
   if (authError) return authError;
 
   try {
+    const { id } = await context.params;
     const { name, quantity } = await request.json();
 
     if (!name || typeof quantity !== 'number' || quantity < 0) {
@@ -61,12 +63,12 @@ export async function PUT(
     }
 
     const updatedProduct = await prisma.product.update({
-      where: { id: params.id },
+      where: { id },
       data: { name, quantity },
     });
 
     return NextResponse.json(updatedProduct);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error al actualizar producto:', error);
     return NextResponse.json(
       { message: 'Error interno del servidor' },
@@ -75,17 +77,19 @@ export async function PUT(
   }
 }
 
-// DELETE: Eliminar un producto por ID
+// DELETE
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   const authError = await checkAuth();
   if (authError) return authError;
 
   try {
+    const { id } = await context.params;
+
     await prisma.product.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return new NextResponse(null, { status: 204 });

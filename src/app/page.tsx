@@ -4,15 +4,6 @@ import { authOptions } from './lib/auth';
 import LogoutButton from '@/components/LogoutButton';
 import InventoryPanel from '@/components/InventoryPanel';
 
-// Definición de tipos para el usuario de la sesión
-declare module 'next-auth' {
-  interface Session {
-    user: {
-      id: string;
-      username: string;
-    };
-  }
-}
 
 export default async function HomePage() {
   // La sesión ya está protegida por el middleware, pero la obtenemos para mostrar el nombre de usuario
