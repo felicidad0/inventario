@@ -4,8 +4,8 @@
 
 .auth-page{
   /* variables locales del componente */
-  --bg-page: #f7fbf6;
-  --card-bg: #ffffff;
+  --bg-page: #f7eea7;
+  --card-bg: #aebedd;
   --muted: #5b6b62;
   --muted-2: #91a199;
   --primary-600: #2a3672; /* verde principal */
