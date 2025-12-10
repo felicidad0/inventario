@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo , useCallback  } from 'react';
 import {
   PlusCircleIcon,
   PencilSquareIcon,
@@ -165,7 +165,8 @@ export default function InventoryPanel() {
   const [searchName, setSearchName] = useState('');
   const [minQuantity, setMinQuantity] = useState<string>('');
 
-  const debounceRef = useRef<number | null>(null);
+// antes: const debounceRef = useRef<number | null>(null);
+const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   // Nuevo: evita llamadas duplicadas con los mismos params
@@ -263,24 +264,31 @@ async function fetchProducts(opts?: { append?: boolean; requestedPage?: number }
   /* Debounce para búsqueda: evita doble fetch.
      Si la página actual no es 1 -> cambiamos a 1 (el efecto page hará el fetch).
      Si la página ya es 1 -> ejecutamos fetchProducts solo UNA vez. */
-  useEffect(() => {
-    if (debounceRef.current) window.clearTimeout(debounceRef.current);
-    // 300ms
-    // @ts-ignore
-    debounceRef.current = window.setTimeout(() => {
-      if (page !== 1) {
-        setPage(1); // la effect de `page` hará fetchProducts({requestedPage:1})
-      } else {
-        // ya estamos en la página 1 -> lanzar fetch una sola vez
-        fetchProducts({ requestedPage: 1 });
-      }
-    }, 300);
+useEffect(() => {
+  if (debounceRef.current) {
+    clearTimeout(debounceRef.current);
+    debounceRef.current = null;
+  }
 
-    return () => {
-      if (debounceRef.current) window.clearTimeout(debounceRef.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchName, minQuantity]); // NOTA: dejamos fuera fetchProducts para evitar recreaciones dobles en dev
+  debounceRef.current = setTimeout(() => {
+    if (page !== 1) {
+      setPage(1); // La effect de `page` hará fetchProducts({ requestedPage: 1 })
+    } else {
+      // Ya estamos en la página 1 -> lanzar fetch una sola vez
+      fetchProducts({ requestedPage: 1 });
+    }
+  }, 300);
+
+  return () => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [searchName, minQuantity]);
+
+// NOTA: dejamos fuera fetchProducts para evitar recreaciones dobles en dev
 
   /* ---------- Cuando cambia la página (por paginación) */
 
@@ -295,21 +303,22 @@ useEffect(() => {
 }, [page]);
 
   /* ---------- Handlers */
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
+ const handleDelete = useCallback(async (id: string) => {
+  if (!window.confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
 
-    const prev = products;
-    setProducts(p => p.filter(it => it.id !== id));
-    setTotalProducts(t => Math.max(0, t - 1));
+  const prev = products;
+  setProducts(p => p.filter(it => it.id !== id));
+  setTotalProducts(t => Math.max(0, t - 1));
 
-    try {
-      const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Error al eliminar el producto');
-    } catch (err: any) {
-      setProducts(prev);
-      setError(err?.message || String(err));
-    }
-  };
+  try {
+    const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Error al eliminar el producto');
+  } catch (err: any) {
+    setProducts(prev);
+    setError(err?.message || String(err));
+  }
+}, [products]); // si prefieres, evita poner `products` y usa setProducts(prev => ...) exclusivamente para no depender de products
+
 
   const handleOpenModal = (product: Product | null = null) => {
     setEditingProduct(product);
