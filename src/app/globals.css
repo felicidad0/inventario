@@ -6,6 +6,14 @@
     /* styles/inventory.css
    Diseño moderno y responsive para InventoryPanel
 */
+/* globals.css (añadir al principio) */
+* { box-sizing: border-box; }
+html, body, #__next {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent; /* opcional: evita fondo blanco por defecto */
+}
 
 /* Variables base */
 :root{

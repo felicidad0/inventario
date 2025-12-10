@@ -16,11 +16,14 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
+  if (!username || !password) {
+    setError('Por favor ingrese usuario y contraseña.');
+    return;
+  }
     const result = await signIn('credentials', {
       redirect: false,
-      username,
-      password,
+         username: username || '', // nunca null
+    password: password || '', // nunca null
     });
 
     if (result?.error) {
@@ -31,16 +34,8 @@ export default function LoginPage() {
     }
   };
 
-  useEffect(() => {
-    // ejemplo: intentar eliminar al desmontar un elemento con id="mi-elemento"
-    return () => {
-      const el = document.getElementById("mi-elemento");
-      if (el && el.parentNode) {
-        el.parentNode.removeChild(el);
-      }
-      // o simplemente: if (el) el.remove();
-    };
-  }, []);
+
+
 return (
   <div className={styles['auth-page']}>
     <div className={styles['auth-card']}>
