@@ -33,17 +33,6 @@
   -moz-osx-font-smoothing:grayscale;
 }
 
-/* dark mode scoped */
-@media (prefers-color-scheme: dark) {
-  .auth-page{
-    --bg-page: linear-gradient(180deg,#071014 0%, #081616 100%);
-    --card-bg: rgba(8,12,10,0.72);
-    --text-color: #dff7e6;
-    --muted: #9fbf9f;
-    --muted-2: #86a686;
-    --shadow-lg: 0 14px 40px rgba(0,0,0,0.6);
-  }
-}
 
 .auth-card{
   width:100%;
