@@ -2,14 +2,13 @@
 'use client';
 
 import { signOut } from 'next-auth/react';
-
-export default function LogoutButton() {
+export default function LogoutButton({ className = "" }) {
   return (
     <button
-      onClick={() => signOut({ callbackUrl: '/login' })}
-      className="px-3 py-1 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-150 ease-in-out"
+      onClick={() => signOut()}
+      className={className}
     >
-      Cerrar Sesión
+      Cerrar sesión
     </button>
   );
 }

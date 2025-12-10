@@ -1,4 +1,5 @@
 // prisma/seed.ts
+/*
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
@@ -6,13 +7,13 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Contraseña de ejemplo: 'password123'
-  const hashedPassword = await bcrypt.hash('password123', 10);
+  const hashedPassword = await bcrypt.hash('123456', 10);
 
   const adminUser = await prisma.user.upsert({
-    where: { username: 'admin' },
+    where: { username: '123' },
     update: {},
     create: {
-      username: 'admin',
+      username: '123',
       password: hashedPassword,
     },
   });
@@ -28,3 +29,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+*/
